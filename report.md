@@ -62,7 +62,7 @@ reaches a score of score mean of 30 after 46 episodes and stayed after 48 episod
 ![](ou.png)
 
 ## Normal Noise
-reaches a score of score mean of 30 after 43 episodes and stayed after 45 episodes above this value. I think it is a good result too and very similir to the first one.
+reaches a score of score mean of 30 after 43 episodes and stayed after 45 episodes above this value. I think it is a good result too and very similar to the first one.
 ![](normal.png)
 
 ## Adaptive Parameter Noise
@@ -70,7 +70,7 @@ reaches a score of score mean of 30 after 24 episodes and stayed above this valu
 ![](param.png)
 
 ## Comparison
-The direct comparison shows, that ou-noise (blue) and normal noise (orange) get good and very similar results. The adaptive parameter noise gets a better - not to say impressive - result. 
+The direct comparison shows, that ou-noise (blue) and normal noise (orange) get good and very similar results. The adaptive parameter noise (green) gets a better - not to say impressive - result. 
 ![](compare.png)
 
 # More Details
