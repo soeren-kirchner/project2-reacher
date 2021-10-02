@@ -1,6 +1,36 @@
 # Learning Algorithm
 
-I implemented a Deep Deterministic Policy Gradient (DDPG) algorithm, introduced by Google researchers in this [paper](https://arxiv.org/abs/1509.02971) for the 20 agents version of the Unity "Reacher" environment. The implementation uses a replay buffer, soft update for the Actor and Critic target networks. The architecture of the networks looks as follows:
+I implemented a Deep Deterministic Policy Gradient (DDPG) algorithm, introduced by Google researchers in this [paper](https://arxiv.org/abs/1509.02971) for the 20 agents version of the Unity "Reacher" environment. The implementation uses a replay buffer, soft update for the Actor and Critic target networks. 
+
+## DDPG 
+
+The Deep Deterministic Policy Gradient (DDPG) algorithm is similar to Deep-Q-Networks. While DQNs are only for descrete action spaces, DDPG is designed to work for continues action spaces. (Therefore considered for the Reacher Environment). 
+DDGP counts among the Actor-Critic methods. The algotithm uses two neural networks. An Actor and a Critic. The Actor approximates the best action for a given state determinitically. The Critic is used as Q-function approximator and maps the given state and the action from the Actor to the Q value. 
+
+![](ddpg.png)
+*original DDPG algorithm from the [original paper](https://arxiv.org/abs/1509.02971)*
+
+This implementation does not update the Actor and the Critic on every timestep. 
+
+### Experience Replay
+DDPG utilizes a replay buffer. On every timestep, the experiences (states, actions, rewards, next_states) of the agents will be stored in a replay buffer for later learning. After a defined amount of those timesteps a minibatch of random samples of defined size is taken from the replaybuffer and used to train the networks. This gives the opportunity to learn from past as well. This helps to stabilize the learning.
+
+### Target Networks
+DDPG uses target networks. The target network used for the taget values are time delayed copys of the regular networks. They do not change on the learning step. 
+After the learning step they get a soft-update. The soft-update blends a given amount, donated by the parameter tau, of the regular network into the target network. 
+The usage of target network stabilizes the learning.
+
+### Exploration Noise
+For exploration noise is added to action values. Besides the commonly used Ornstein-Uhlenbeck process noise, I tried normal noise and [adaptive parameter noise](https://arxiv.org/abs/1706.01905) as well. OU-Noise (Ornstein-Uhlenbeck process noise) is sampled from the Ornstein-Uhlenbeck process. The process needs to be initialized first. The second method, Normal Action Noise simply adds normal noise to the action values.  
+The third method is a little different.
+
+### Adaptive Parameter Noise
+It adds noise to the weights of the Actor, forward pass the state values and get noised action values this way instead of adding the noise to the action values.
+If noise is put directly to the weights of the network, we can not say how much it will affect the action values. And even worse, the impact will change over time. 
+We make a copy of the current Actor and put a little amount of noise to its weights. Then we forward pass the state thru both networks and calculate the distance between the results.
+If the distance is greater than the desired value, we decrease the amount of noise we put to the weights next time, and if the distance is lower than the desired value, we increase the amount of noise. The desired value is a new hyperparameter we chose similar to selecting the standard deviation on normal noise.
+
+### The architecture of the networks
 
 ```
 Actor(
@@ -29,8 +59,6 @@ Critic(
 )
 ```
 The results of the Actor and the first sequence of the Critic are passed together to the second sequence of the Critic.
-## Action Noise
-In this project, I especially focused on the added noise while training. Besides the commonly used Ornstein-Uhlenbeck process noise, I tried normal noise and [adaptive parameter noise](https://arxiv.org/abs/1706.01905) as well.
 
 ## Hyperparameters
 For all three kinds of adding noise, I used the same architecture and hyperparameters, except for the method-specific ones.
